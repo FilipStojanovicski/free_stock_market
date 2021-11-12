@@ -1,0 +1,13 @@
+pandas
+psycopg2
+datetime
+alpaca_trade_api
+numpy
+flask
+flask_sqlalchemy
+flask_bcrypt
+flask_login
+flask_wtf
+wtforms
+email-validator
+gunicorn
