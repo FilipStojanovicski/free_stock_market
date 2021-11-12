@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}
+Leaderboard
+{% endblock %}
+{% block content %}
+<div class = "mx-5 mt-2">
+   {% if current_user.is_authenticated %}
+   <h3 style="text-align: center;">Your Total Net Worth: ${{ format_numbers(round_data(
+      current_user_net_worth.total_net_worth, decimal_places=2, rounding_type="ROUND_DOWN")) }}
+      <br> Your Ranking: {{ current_user_net_worth.rank }} out of {{ num_users }}
+   </h3>
+   {% endif %}
+</div>
+<table class="table table-hover table-dark">
+   <thead>
+      <tr class="bg-info">
+         <th scope="col">User</th>
+         <th scope="col">Net Worth</th>
+         <th scope="col">Rank</th>
+      </tr>
+   </thead>
+   <tbody>
+      {% if current_user.is_authenticated %}
+      <tr>
+         <td>{{ current_user_net_worth.Users.username }}</td>
+         <td>{{ format_numbers(round_data(
+               current_user_net_worth.total_net_worth, decimal_places=2, rounding_type="ROUND_DOWN")) }}</td>
+         <td>{{ current_user_net_worth.rank }} / {{ num_users }}</td>
+      </tr>
+      <tr class = "bg-info" style="font-weight:bold;">
+         <td>Top 20 Users</td>
+         <td></td>
+         <td></td>
+      </tr>
+      {% endif %}
+      {% for user in users_net_worths %}
+      <tr>
+         <td>{{ user.Users.username }}</td>
+         <td>{{ format_numbers(round_data(user.total_net_worth, decimal_places=2, rounding_type="ROUND_DOWN")) }}</td>
+         <td>{{ user.rank }} / {{ num_users }}</td>
+      </tr>
+      {% endfor %}
+   </tbody>
+</table>
+{% endblock %}

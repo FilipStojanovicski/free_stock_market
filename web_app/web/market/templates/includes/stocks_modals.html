@@ -1,0 +1,78 @@
+<div class="modal fade" id="Modal-MoreInfo-{{ stock.id }}"
+   tabindex="-1"
+   aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="ModalLabel">
+               {{ stock.symbol }}
+            </h5>
+            <button type="button" class="close"
+               data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <div class = "container">
+               <div class="row">Open: {{ stock.prettier_open }}</div>
+               <div class="row">High: {{ stock.prettier_high }} </div>
+               <div class="row">Low: {{ stock.prettier_low }} </div>
+               <div class="row">Close: {{ stock.prettier_close }} </div>
+               <div class="row">Volume: {{ stock.prettier_volume }} </div>
+               <div class="row">Trade Count: {{ stock.prettier_trade_count }} </div>
+               <div class="row">VWAP: {{ stock.prettier_vwap }} </div>
+            </div>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+               data-dismiss="modal">Close
+            </button>
+         </div>
+      </div>
+   </div>
+</div>
+<div class="modal fade" id="Modal-PurchaseConfirm-{{ stock.id }}"
+   tabindex="-1"
+   aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <div class="modal-dialog">
+      <div class="modal-content">
+         <div class="modal-header">
+            <h5 class="modal-title" id="ModalLabel">
+               {{ stock.symbol }}
+            </h5>
+            <button type="button" class="close"
+               data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+         </div>
+         <div class="modal-body">
+            <form method = "POST">
+               {{ purchase_form.hidden_tag() }}
+               <h4 class = "text-center">
+                  Unit Price: ${{ stock.prettier_buy_unit_price }}
+               </h4>
+               <h6 class = "text-center">
+                  Enter the Quantity you want below:
+               </h6>
+               {{ purchase_form.quantity(class = "form-control", placeholder = 0.00) }}
+               <br>
+               <h6 class = "text-center">
+                  By clicking Purchase you will purchase this stock:
+               </h6>
+               <input id="purchased_stock" name="purchased_stock" type="hidden" value="{{ stock.symbol }}">
+               {{ purchase_form.submit(class = "btn btn-outline-success btn-block") }}
+            </form>
+         </div>
+         <div class="modal-footer">
+            <button type="button" class="btn btn-secondary"
+               data-dismiss="modal">Close
+            </button>
+         </div>
+      </div>
+   </div>
+</div>
+<style>
+   .modal-content {
+   background-color: #212121
+   }
+</style>

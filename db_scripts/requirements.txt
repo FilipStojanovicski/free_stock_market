@@ -1,0 +1,5 @@
+pandas
+psycopg2
+datetime
+alpaca_trade_api
+numpy
