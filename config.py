@@ -19,4 +19,4 @@ PROD_DB = f"postgresql://{pg_user_prod}:{pg_pass_prod}@{pg_host_prod}:{pg_port_p
 
 APCA_API_KEY_ID = ""
 APCA_API_SECRET_KEY = ""
-FLASK_SECRET_KEY = ""
+FLASK_SECRET_KEY = ''

@@ -2,12 +2,12 @@ from market import db, login_manager
 from market import bcrypt
 from flask_login import UserMixin
 from market.utils import round_data, all_stock_crypto_list
+from sqlalchemy import UniqueConstraint
 import decimal
 
 class StockPrices(db.Model):
-    __table_args__ = {"schema":"stock_trading_marketplace"}
     id = db.Column(db.Integer(), primary_key=True)
-    symbol = db.Column(db.String(length = 30), nullable = False, unique = True)
+    symbol = db.Column(db.String(length = 30), nullable = False)
     name = db.Column(db.String(length = 100), nullable = False)
     timestamp = db.Column(db.DateTime(), nullable = False)
     open = db.Column(db.Float())
@@ -17,6 +17,8 @@ class StockPrices(db.Model):
     volume = db.Column(db.Integer())
     trade_count = db.Column(db.Integer())
     vwap = db.Column(db.Float())
+    __table_args__ = (UniqueConstraint('symbol', 'timestamp', name='_symbol_timestamp_uc'),
+                     {"schema":"stock_trading_marketplace"})
     def __repr__(self):
         return f'StockPrices: {str(self.timestamp)}'
 
@@ -61,7 +63,7 @@ class StockPrices(db.Model):
         owned_stock_quantity = user_owned_stocks.get_quantity(stock_to_purchase)
         user_owned_stocks.set_quantity(stock_to_purchase, owned_stock_quantity + quantity)
         # Need to update their net worth as well
-        user_owned_stocks.net_worth = user_owned_stocks.get_owned_stocks_net_worth()
+        user_owned_stocks.update_owned_stocks_net_worth()
         db.session.commit()
 
     def sell(self, user, quantity):
@@ -74,7 +76,7 @@ class StockPrices(db.Model):
         owned_stock_quantity = user_owned_stocks.get_quantity(stock_to_sell)
         user_owned_stocks.set_quantity(stock_to_sell, owned_stock_quantity - quantity)
         # Need to update their net worth as well
-        user_owned_stocks.net_worth = user_owned_stocks.get_owned_stocks_net_worth()
+        user_owned_stocks.update_owned_stocks_net_worth()
         db.session.commit()
 
 
@@ -89,8 +91,8 @@ class Users(db.Model, UserMixin):
     stocks = db.relationship('OwnedStocks', backref='owned_user', lazy=True, uselist = False)
     email_address = db.Column(db.String(length = 50), nullable = False, unique = True)
     password_hash = db.Column(db.String(length = 60), nullable = False)
-    company = db.Column(db.String(length = 30), nullable = False, unique = False)
-    budget = db.Column(db.Integer(), nullable=False, default=10000)
+    company = db.Column(db.String(length = 30), nullable = False)
+    budget = db.Column(db.Float(), nullable=False, default=100000)
     def __repr__(self):
         return f'User {self.username}'
 
@@ -203,6 +205,12 @@ class OwnedStocks(db.Model):
             stock_price_object = self.get_symbol_stock_price_object(stock)
             total_value += (quantity * stock_price_object.vwap)
         return total_value
+
+    # Update the total value of all owned stocks
+    def update_owned_stocks_net_worth(self):
+        net_worth = self.get_owned_stocks_net_worth()
+        self.net_worth = net_worth
+        db.session.commit()
 
     # Get the stock price object associated with a symbol
     def get_symbol_stock_price_object(self, symbol):
